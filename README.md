@@ -1,2 +1,2 @@
 # Java-Assesment-Workspace-Infotech
-Assessment Test for Java Internship/ Trainee Position
+Submission for assessment test for Java Internship/ Trainee Position
