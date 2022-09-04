@@ -1,9 +1,7 @@
 import Task2.Account;
 import Task2.AccountServiceImp;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Start {
     static void Menu(){
@@ -21,13 +19,12 @@ public class Start {
     public static void main(String[] args) {
 
         AccountServiceImp account = null;
-        ArrayList<String> transactionHistory = new ArrayList<>();
-        ArrayList<Account> accountList = new ArrayList<>();
+        ArrayList<AccountServiceImp> accountList = new ArrayList<>();
 
         Scanner scanner = new Scanner(System.in);
         int option = 0;
-        Menu();
         while(option!=7){
+            Menu();
             System.out.println("Enter your option: ");
             try {
                 option = scanner.nextInt();
@@ -47,7 +44,7 @@ public class Start {
                 try{
                     double balance = scanner.nextDouble();
                     account = new AccountServiceImp(new Account(accNum, accName, balance));
-                    accountList.add(new Account(accNum, accName, balance));
+                    accountList.add(account);
                     System.out.println("Account created successfully");
                     System.out.println("-----------------------------");
                 }
@@ -58,51 +55,139 @@ public class Start {
                     break;
                 }
             }
-            else if(option==2){
+            else if(option==2) {
                 System.out.println("Enter your account number: ");
-                String accNum = scanner.next();
-                System.out.println("Enter your deposit amount: ");
-                try{
-                    double amount = scanner.nextDouble();
-                    account.deposit.transaction(accNum, amount);
-                    transactionHistory.add("Credited: " + amount+" to " + accNum);
+                String accNum;
+                accNum = scanner.next();
+                boolean hasAccount = false;
+                for (AccountServiceImp acc : accountList) {
+                    if (acc.getAccNum().equals(accNum)) {
+                        hasAccount = true;
+                        if (hasAccount) {
+                            System.out.println("Enter your deposit amount: ");
+                            try {
+                                double amount = scanner.nextDouble();
+                                acc.deposit.transaction(acc, amount);
+                            } catch (InputMismatchException e) {
+                                System.out.println("Invalid input");
+                                System.out.println("-----------------------------");
+                                scanner.nextLine();
+                                break;
+                            }
+                            break;
+                        }
+                    }
                 }
-                catch (InputMismatchException e){
-                    System.out.println("Invalid input");
+                if(!hasAccount){
+                    System.out.println("Account not found");
                     System.out.println("-----------------------------");
-                    scanner.nextLine();
-                    break;
                 }
             }
             else if(option==3){
                 System.out.println("Enter your account number: ");
-                String accNum = scanner.next();
-                System.out.println("Enter your withdraw amount: ");
-                try{
-                    double amount = scanner.nextDouble();
-                    account.withdraw.transaction(accNum, amount);
-                    transactionHistory.add("Debited: " + amount+" from "+accNum);
+                String accNum;
+                accNum = scanner.next();
+                boolean hasAccount = false;
+                for (AccountServiceImp acc : accountList) {
+                    if (acc.getAccNum().equals(accNum)) {
+                        hasAccount = true;
+                        if (hasAccount) {
+                            System.out.println("Enter your withdraw amount: ");
+                            try {
+                                double amount = scanner.nextDouble();
+                                acc.withdraw.transaction(acc, amount);
+                            } catch (InputMismatchException e) {
+                                System.out.println("Invalid input");
+                                System.out.println("-----------------------------");
+                                scanner.nextLine();
+                                break;
+                            }
+                            break;
+                        }
+                    }
                 }
-                catch (InputMismatchException e){
-                    System.out.println("Invalid input");
+                if(!hasAccount){
+                    System.out.println("Account not found");
                     System.out.println("-----------------------------");
-                    scanner.nextLine();
-                    break;
                 }
             }
             else if(option==4){
                 System.out.println("Enter your account number: ");
-                String accNum = scanner.next();
-                System.out.println("Enter your transfer amount: ");
-                try{
-                    double amount = scanner.nextDouble();
-                    System.out.println("Enter the account number you want to transfer: ");
-                    String accNum2 = scanner.next();
-                    for (Account account1 : accountList) {
-                        if (account1.getAccNum().equals(accNum2)) {
-                            account.transfer(accNum, amount, account1);
-                            transactionHistory.add("Transfer: " + amount);
+                String accNum;
+                accNum = scanner.next();
+                boolean hasAccount = false;
+                for(AccountServiceImp acc: accountList){
+                    if(acc.getAccNum().equals(accNum)){
+                        hasAccount = true;
+                        if(hasAccount){
+                            System.out.println("Enter your transfer amount: ");
+                            try{
+                                double amount = scanner.nextDouble();
+                                System.out.println("Enter the account number you want to transfer: ");
+                                String accNum2 = scanner.next();
+                                for (AccountServiceImp account1 : accountList) {
+                                    if (account1.getAccNum().equals(accNum2)) {
+                                        acc.withdraw.transaction(acc, amount);
+                                        account1.deposit.transaction(account1, amount);
+                                    }
+                                }
+                            }
+                            catch (InputMismatchException e){
+                                System.out.println("Invalid input");
+                                System.out.println("-----------------------------");
+                                scanner.nextLine();
+                                break;
+                            }
                         }
+                        break;
+                    }
+                }
+                if(!hasAccount){
+                    System.out.println("Account does not exist");
+                }
+            }
+            else if(option==5){
+                System.out.println("Enter your account number: ");
+                String accNum;
+                accNum = scanner.next();
+                boolean hasAccount = false;
+                System.out.println("Transaction History");
+                for(Account acc: accountList){
+                    if(acc.getAccNum().equals(accNum)){
+                        hasAccount = true;
+                        break;
+                    }
+                }
+                if(hasAccount){
+                    for(AccountServiceImp acc: accountList){
+                        if(acc.getAccNum().equals(accNum)){
+                            acc.printTransactionHistory(acc);
+                            System.out.println("-----------------------------");
+                        }
+                    }
+                }
+                else{
+                    System.out.println("Account does not exist");
+                }
+            }
+            else if(option==6){
+                System.out.println("Enter your account number: ");
+                String accNum;
+                try{
+                    accNum = scanner.next();
+                    boolean hasAccount = false;
+                    for(AccountServiceImp acc: accountList){
+                        if(acc.getAccNum().equals(accNum)){
+                            hasAccount = true;
+                            System.out.println("Account Number: "+acc.getAccNum());
+                            System.out.println("Account Name: "+acc.getAccName());
+                            System.out.println("Account Balance: "+acc.getBalance());
+                            System.out.println("-----------------------------");
+                            break;
+                        }
+                    }
+                    if(!hasAccount){
+                        System.out.println("Account does not exist");
                     }
                 }
                 catch (InputMismatchException e){
@@ -110,25 +195,6 @@ public class Start {
                     System.out.println("-----------------------------");
                     scanner.nextLine();
                     break;
-                }
-            }
-            else if(option==5){
-                System.out.println("Transaction History");
-                String accNum = scanner.next();
-                for (String s : transactionHistory) {
-                    if(accNum.equals(account.getAccNum())){
-                        System.out.println(s);
-                    }
-                    System.out.println(s);
-                }
-                System.out.println("-----------------------------");
-            }
-            else if(option==6){
-                for(Account acc: accountList){
-                    System.out.println("Account Number: "+acc.getAccNum());
-                    System.out.println("Account Name: "+acc.getAccName());
-                    System.out.println("Account Balance: "+acc.getBalance());
-                    System.out.println("-----------------------------");
                 }
             }
         }

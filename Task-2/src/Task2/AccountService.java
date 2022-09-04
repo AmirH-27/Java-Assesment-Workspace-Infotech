@@ -1,7 +1,7 @@
 package Task2;
 @FunctionalInterface
 public interface AccountService {
-    public void transaction(String accNum, double amount);
-    default void transfer(String accNum, double amount, Account account){}
+    public void transaction(Account account, double amount);
+    default void transfer(Account acc1, double amount, Account acc2){}
 }
 
