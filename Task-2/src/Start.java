@@ -7,102 +7,132 @@ import java.util.Scanner;
 
 public class Start {
     static void Menu(){
-        System.out.println("1. Deposit");
-        System.out.println("2. Withdraw");
-        System.out.println("3. Transfer");
-        System.out.println("4. Transaction History");
-        System.out.println("5. User Details");
-        System.out.println("6. Exit");
+        System.out.println("Welcome to the Bank");
+        System.out.println("1. Create Account");
+        System.out.println("2. Deposit");
+        System.out.println("3. Withdraw");
+        System.out.println("4. Transfer");
+        System.out.println("5. Transaction History");
+        System.out.println("6. User Details");
+        System.out.println("7. Exit");
         System.out.println("-----------------------------");
     }
 
     public static void main(String[] args) {
-        AccountServiceImp account1 = new AccountServiceImp(
-                new Account("123456789", "Habib", 10000));//user1 with initial balance
-        AccountServiceImp account2 = new AccountServiceImp(
-                new Account("987654321", "Amir", 7000));//user2 used to transfer money from user 1
 
+        AccountServiceImp account = null;
         ArrayList<String> transactionHistory = new ArrayList<>();
+        ArrayList<Account> accountList = new ArrayList<>();
 
         Scanner scanner = new Scanner(System.in);
         int option = 0;
         Menu();
-        while(option!=6){
-            System.out.print("Enter your option: ");
+        while(option!=7){
+            System.out.println("Enter your option: ");
             try {
                 option = scanner.nextInt();
             }
-            catch (InputMismatchException e) {
+            catch (InputMismatchException e){
                 System.out.println("Invalid input");
                 System.out.println("-----------------------------");
-                break;
+                scanner.nextLine();
+                continue;
             }
             if(option==1){
-                System.out.print("Enter amount to deposit: ");
+                System.out.println("Enter your account number: ");
+                String accNum = scanner.next();
+                System.out.println("Enter your account name: ");
+                String accName = scanner.next();
+                System.out.println("Enter your account balance: ");
                 try{
-                    double amount = scanner.nextDouble();
+                    double balance = scanner.nextDouble();
+                    account = new AccountServiceImp(new Account(accNum, accName, balance));
+                    accountList.add(new Account(accNum, accName, balance));
+                    System.out.println("Account created successfully");
                     System.out.println("-----------------------------");
-                    account1.deposit.transaction(account1.getAccNum(), amount);
-                    transactionHistory.add(amount + " Credited to " + account1.getAccName()+" Account Number: "+account1.getAccNum());
                 }
                 catch (InputMismatchException e){
                     System.out.println("Invalid input");
                     System.out.println("-----------------------------");
+                    scanner.nextLine();
                     break;
                 }
             }
             else if(option==2){
-                System.out.print("Enter amount to withdraw: ");
+                System.out.println("Enter your account number: ");
+                String accNum = scanner.next();
+                System.out.println("Enter your deposit amount: ");
                 try{
                     double amount = scanner.nextDouble();
-                    System.out.println("-----------------------------");
-                    account1.withdraw.transaction(account1.getAccNum(), amount);
-                    transactionHistory.add(amount + " Debited to " + account1.getAccName()+" Account Number: "+account1.getAccNum());
+                    account.deposit.transaction(accNum, amount);
+                    transactionHistory.add("Credited: " + amount+" to " + accNum);
                 }
                 catch (InputMismatchException e){
                     System.out.println("Invalid input");
                     System.out.println("-----------------------------");
+                    scanner.nextLine();
                     break;
                 }
             }
             else if(option==3){
-                System.out.print("Enter amount to transfer: ");
+                System.out.println("Enter your account number: ");
+                String accNum = scanner.next();
+                System.out.println("Enter your withdraw amount: ");
                 try{
                     double amount = scanner.nextDouble();
-                    System.out.println("-----------------------------");
-                    account1.transfer(account1.getAccNum(), amount, account2);
-                    transactionHistory.add(amount + " Debited to " + account1.getAccName()+" Account Number: "+account1.getAccNum());
-                    transactionHistory.add(amount + " Credited to " + account2.getAccName()+" Account Number: "+account2.getAccNum());
+                    account.withdraw.transaction(accNum, amount);
+                    transactionHistory.add("Debited: " + amount+" from "+accNum);
                 }
                 catch (InputMismatchException e){
                     System.out.println("Invalid input");
                     System.out.println("-----------------------------");
+                    scanner.nextLine();
                     break;
                 }
             }
             else if(option==4){
-                System.out.println("Transaction History");
-                int i =1;
-                for (String s : transactionHistory) {
-                    System.out.println(i+": "+s);
-                    i++;
+                System.out.println("Enter your account number: ");
+                String accNum = scanner.next();
+                System.out.println("Enter your transfer amount: ");
+                try{
+                    double amount = scanner.nextDouble();
+                    System.out.println("Enter the account number you want to transfer: ");
+                    String accNum2 = scanner.next();
+                    for (Account account1 : accountList) {
+                        if (account1.getAccNum().equals(accNum2)) {
+                            account.transfer(accNum, amount, account1);
+                            transactionHistory.add("Transfer: " + amount);
+                        }
+                    }
+                }
+                catch (InputMismatchException e){
+                    System.out.println("Invalid input");
+                    System.out.println("-----------------------------");
+                    scanner.nextLine();
+                    break;
                 }
             }
             else if(option==5){
-                System.out.println("User Details");
-                System.out.println("Account Number: " + account1.getAccNum());
-                System.out.println("Account Name: " + account1.getAccName());
-                System.out.println("Account Balance: " + account1.getBalance());
+                System.out.println("Transaction History");
+                String accNum = scanner.next();
+                for (String s : transactionHistory) {
+                    if(accNum.equals(account.getAccNum())){
+                        System.out.println(s);
+                    }
+                    System.out.println(s);
+                }
                 System.out.println("-----------------------------");
             }
             else if(option==6){
-                System.out.println("Thank you for using our service");
-            }
-            else if(option==0){
-                Menu();
+                for(Account acc: accountList){
+                    System.out.println("Account Number: "+acc.getAccNum());
+                    System.out.println("Account Name: "+acc.getAccName());
+                    System.out.println("Account Balance: "+acc.getBalance());
+                    System.out.println("-----------------------------");
+                }
             }
         }
-        if(option!=6){
+        if(option!=7){
             main(null);
         }
     }

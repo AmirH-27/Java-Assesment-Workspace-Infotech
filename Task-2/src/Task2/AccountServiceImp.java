@@ -22,10 +22,7 @@ public class AccountServiceImp extends Account implements AccountService{
     };
 
     @Override
-    public void transaction(String accountId, double amount) {
-//        deposit.transaction(accountId, amount);
-//        withdraw.transaction(accountId, amount);
-    }
+    public void transaction(String accountId, double amount) {}
 
     @Override
     public void transfer(String accountId, double amount, Account account) {
